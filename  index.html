@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Night Line · English Lit Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0c0907;
+  --bg-mid:#140f0c;
+  --glass-bg:rgba(255,255,255,0.045);
+  --glass-bg-strong:rgba(255,255,255,0.08);
+  --glass-border:rgba(255,255,255,0.11);
+  --glass-border-soft:rgba(255,255,255,0.07);
+  --text-primary:#f4ede2;
+  --text-muted:#b3a595;
+  --text-faint:#7c7264;
+  --accent:#db7a45;
+  --accent-2:#f0a468;
+  --radius-xl:34px;
+  --radius-lg:24px;
+  --radius-md:16px;
+  --shadow-glass:0 10px 34px rgba(0,0,0,0.45);
+  --ease:cubic-bezier(.16,.84,.44,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; min-height:100vh; font-family:'Inter',sans-serif; color:var(--text-primary);
+  background:
+    radial-gradient(ellipse 85% 55% at 18% -8%, rgba(219,122,69,0.16), transparent 58%),
+    radial-gradient(ellipse 70% 45% at 100% 5%, rgba(160,70,40,0.10), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 50% 105%, rgba(219,122,69,0.08), transparent 55%),
+    linear-gradient(180deg, var(--bg-deep), var(--bg-mid) 45%, var(--bg-deep) 100%);
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;}
+::selection{background:rgba(219,122,69,0.32);}
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.10);border-radius:10px;}
+
+.app-shell{
+  position:relative; z-index:1; max-width:760px; margin:18px auto; border-radius:40px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+  border:1px solid var(--glass-border-soft);
+  box-shadow:0 30px 90px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+@media (max-width:720px){.app-shell{margin:0;border-radius:0;}}
+
+header.top{
+  position:sticky; top:0; z-index:30; padding:20px 24px 16px;
+  background:rgba(12,9,7,0.6); backdrop-filter:blur(20px) saturate(140%);
+  border-bottom:1px solid var(--glass-border-soft);
+}
+.brand-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;}
+.brand{display:flex;flex-direction:column;gap:2px;cursor:pointer;}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--text-faint);text-transform:uppercase;}
+.brand h1.logo{font-family:'Fraunces',serif;font-weight:700;font-size:26px;margin:0;letter-spacing:-.5px;color:var(--text-primary);}
+.hdr-actions{display:flex;align-items:center;gap:10px;}
+.pill-btn{
+  font-family:'Inter',sans-serif; font-weight:700; font-size:13px; color:#1a0f08;
+  background:linear-gradient(135deg,var(--accent-2),var(--accent));
+  padding:11px 18px; border-radius:100px; display:flex; align-items:center; gap:7px; cursor:pointer;
+  border:none; box-shadow:0 8px 20px rgba(219,122,69,0.28); transition:transform .3s var(--ease);
+}
+.pill-btn:hover{transform:translateY(-2px);}
+.icon-btn{
+  width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--glass-bg); border:1px solid var(--glass-border-soft); cursor:pointer; color:var(--text-muted);
+  transition:all .3s var(--ease); font-size:16px;
+}
+.icon-btn:hover{background:var(--glass-bg-strong);color:var(--text-primary);}
+
+.flap-tabs{display:flex;gap:8px;}
+.flap-tab{
+  flex:1; text-align:center; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase;
+  color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--glass-border-soft);
+  padding:10px 10px; border-radius:14px; cursor:pointer; transition:all .35s var(--ease);
+}
+.flap-tab.active{color:#1a0f08;background:linear-gradient(135deg,var(--accent-2),var(--accent));border-color:transparent;font-weight:700;box-shadow:0 6px 18px rgba(219,122,69,0.25);}
+
+main{padding:24px 22px 70px;}
+@media (max-width:480px){main{padding:18px 14px 60px;}}
+
+.view{display:none;}
+.view.active{display:block;animation:fadeUp .55s var(--ease);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+.glass{background:var(--glass-bg);border:1px solid var(--glass-border-soft);border-radius:var(--radius-lg);box-shadow:var(--shadow-glass);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease), transform .6s var(--ease);}
+.reveal.show{opacity:1;transform:translateY(0);}
+
+/* ---------- intro on home ---------- */
+.intro{padding:10px 4px 22px;}
+.intro p{font-size:14px;color:var(--text-muted);line-height:1.65;max-width:480px;margin:0;}
+
+/* ---------- hero / chapter card (Itihasa-style) ---------- */
+.hero-card{position:relative;padding:30px 26px 26px;margin-bottom:18px;overflow:hidden;cursor:pointer;transition:transform .4s var(--ease), border-color .4s var(--ease);}
+.hero-card:hover{transform:translateY(-3px);border-color:var(--glass-border);}
+.hero-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 90% -10%, rgba(219,122,69,0.20), transparent 55%);pointer-events:none;}
+.hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2.5px;color:var(--accent-2);text-transform:uppercase;margin-bottom:14px;position:relative;}
+.hero-card h2{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(28px,7vw,38px);line-height:1.06;margin:0 0 12px;letter-spacing:-.5px;position:relative;}
+.hero-meta{font-family:'Space Mono',monospace;font-size:12.5px;color:var(--text-muted);margin-bottom:22px;position:relative;}
+.progress-row{display:flex;align-items:center;gap:14px;position:relative;}
+.progress-track{flex:1;height:7px;border-radius:100px;background:rgba(255,255,255,0.07);overflow:hidden;}
+.progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%;transition:width .6s var(--ease);}
+.progress-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-faint);white-space:nowrap;}
+
+/* home chapter picker cards stacked, compact version of hero */
+.pick-card{padding:24px 22px;margin-bottom:16px;}
+.pick-card .hero-eyebrow{margin-bottom:10px;}
+.pick-card h2{font-size:24px;margin-bottom:8px;}
+.pick-card p.desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin:0 0 18px;max-width:480px;}
+
+/* ---------- accordion ---------- */
+.accordion{display:flex;flex-direction:column;gap:12px;}
+.acc-item{border-radius:20px;overflow:hidden;background:var(--glass-bg);border:1px solid var(--glass-border-soft);transition:border-color .3s var(--ease);}
+.acc-item.open{border-color:var(--glass-border);}
+.acc-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;}
+.acc-icon{
+  width:42px;height:42px;border-radius:13px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  font-size:18px;background:rgba(219,122,69,0.14);border:1px solid rgba(219,122,69,0.25);
+}
+.acc-title{flex:1;font-family:'Fraunces',serif;font-size:16.5px;font-weight:600;color:var(--text-primary);}
+.acc-chev{color:var(--text-faint);font-size:13px;transition:transform .4s var(--ease);flex:0 0 auto;}
+.acc-item.open .acc-chev{transform:rotate(180deg);color:var(--accent-2);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .5s var(--ease);}
+.acc-body-inner{padding:4px 20px 22px;}
+
+/* ---------- inner content styles (reused inside accordion) ---------- */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stat{padding:13px 14px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border-soft);}
+.stat .k{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--text-faint);text-transform:uppercase;margin-bottom:6px;}
+.stat .v{font-size:13px;color:var(--text-primary);font-weight:600;line-height:1.35;}
+
+.char-card{padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border-soft);margin-bottom:10px;}
+.char-card:last-child{margin-bottom:0;}
+.char-card .name{font-weight:700;font-size:14px;margin-bottom:4px;}
+.char-card .role{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--accent-2);text-transform:uppercase;margin-bottom:7px;display:block;}
+.char-card p{font-size:12.8px;color:var(--text-muted);line-height:1.6;margin:0;}
+
+.timeline{position:relative;padding-left:22px;}
+.timeline::before{content:'';position:absolute;left:5px;top:5px;bottom:5px;width:1.5px;background:linear-gradient(180deg,var(--accent),transparent);}
+.tl-item{position:relative;padding-bottom:16px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:-22px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(255,255,255,0.04);}
+.tl-item .step{font-family:'Space Mono',monospace;font-size:9.5px;color:var(--text-faint);margin-bottom:3px;letter-spacing:1px;}
+.tl-item p{margin:0;font-size:13px;color:var(--text-muted);line-height:1.6;}
+
+.pill-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.pill{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.5px;padding:7px 12px;border-radius:100px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border-soft);color:var(--text-muted);}
+.note-list{display:flex;flex-direction:column;gap:10px;}
+.note-item{padding:13px 15px;border-radius:14px;background:rgba(255,255,255,0.025);border:1px solid var(--glass-border-soft);}
+.note-item b{display:block;font-size:12.8px;color:var(--text-primary);margin-bottom:4px;}
+.note-item p{margin:0;font-size:12.6px;color:var(--text-muted);line-height:1.6;}
+
+.qa-item{border-bottom:1px solid var(--glass-border-soft);}
+.qa-item:last-child{border-bottom:none;}
+.qa-q{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 2px;cursor:pointer;font-size:13.3px;font-weight:600;}
+.qa-q .plus{font-family:'Space Mono',monospace;font-size:15px;color:var(--accent-2);transition:transform .35s var(--ease);}
+.qa-item.open .qa-q .plus{transform:rotate(45deg);}
+.qa-a{max-height:0;overflow:hidden;transition:max-height .45s var(--ease);}
+.qa-a p{margin:0 2px 14px;font-size:12.6px;color:var(--text-muted);line-height:1.6;}
+
+.flash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media (max-width:380px){.flash-grid{grid-template-columns:1fr;}}
+.flash{perspective:1200px;height:130px;cursor:pointer;}
+.flash-inner{position:relative;width:100%;height:100%;transition:transform .6s var(--ease);transform-style:preserve-3d;}
+.flash.flipped .flash-inner{transform:rotateY(180deg);}
+.flash-face{position:absolute;inset:0;border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:center;backface-visibility:hidden;border:1px solid var(--glass-border-soft);}
+.flash-front{background:linear-gradient(150deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015));}
+.flash-front .tag{font-family:'Space Mono',monospace;font-size:8.5px;color:var(--accent-2);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase;}
+.flash-front .q{font-size:12.5px;font-weight:700;line-height:1.35;}
+.flash-back{background:linear-gradient(150deg,var(--accent),var(--accent-2) 130%);transform:rotateY(180deg);color:#1a0f08;}
+.flash-back .a{font-size:12px;line-height:1.5;font-weight:600;}
+
+.quiz-progress{display:flex;gap:5px;margin-bottom:16px;}
+.quiz-progress i{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,0.07);position:relative;overflow:hidden;}
+.quiz-progress i.done::after{content:'';position:absolute;inset:0;background:var(--accent);}
+.quiz-q{font-size:14px;font-weight:700;margin-bottom:14px;line-height:1.5;}
+.quiz-opts{display:flex;flex-direction:column;gap:9px;}
+.quiz-opt{padding:12px 14px;border-radius:13px;background:rgba(255,255,255,0.025);border:1px solid var(--glass-border-soft);font-size:12.8px;color:var(--text-muted);cursor:pointer;transition:all .25s var(--ease);}
+.quiz-opt:hover{background:rgba(255,255,255,0.05);}
+.quiz-opt.correct{background:rgba(219,122,69,0.18);border-color:var(--accent);color:#ffe9d9;}
+.quiz-opt.wrong{background:rgba(160,60,60,0.18);border-color:#a34a4a;color:#ffd9d9;}
+.quiz-opt.disabled{pointer-events:none;}
+.quiz-footer{display:flex;align-items:center;justify-content:space-between;margin-top:18px;}
+.quiz-score{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-faint);}
+.btn{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:10px 18px;border-radius:100px;border:1px solid var(--glass-border);background:linear-gradient(135deg,var(--accent-2),var(--accent));color:#1a0f08;font-weight:700;cursor:pointer;transition:transform .25s var(--ease);}
+.btn:hover{transform:translateY(-2px);}
+.btn.ghost{background:transparent;color:var(--text-muted);font-weight:600;border-color:var(--glass-border-soft);}
+
+.next-chip{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px;padding:16px 20px;cursor:pointer;font-size:13.5px;color:var(--text-primary);font-weight:600;}
+.next-chip span.lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-faint);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:3px;font-weight:400;}
+
+footer.app-foot{padding:18px 24px 24px;text-align:center;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:1.5px;color:var(--text-faint);text-transform:uppercase;}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<div class="app-shell">
+  <header class="top">
+    <div class="brand-row">
+      <div class="brand" onclick="switchView('home')">
+        <div class="eyebrow">English Lit · Study Companion</div>
+        <h1 class="logo">Night Line</h1>
+      </div>
+      <div class="hdr-actions">
+        <div class="icon-btn" onclick="switchView('home')" title="Home">⌂</div>
+      </div>
+    </div>
+    <nav class="flap-tabs">
+      <div class="flap-tab active" data-view="home" onclick="switchView('home')">Home</div>
+      <div class="flap-tab" data-view="bonku" onclick="switchView('bonku')">Bonku Babu</div>
+      <div class="flap-tab" data-view="skimble" onclick="switchView('skimble')">Skimbleshanks</div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ================= HOME ================= -->
+    <div class="view active" id="view-home">
+      <div class="intro reveal">
+        <p>Two chapters, two very different journeys. Tap a chapter to open its notes, characters, themes, flashcards and a quick quiz.</p>
+      </div>
+
+      <div class="glass pick-card reveal" onclick="switchView('bonku')">
+        <div class="hero-eyebrow">Chapter I · Story</div>
+        <h2>Bonku Babu's Friend</h2>
+        <p class="desc">Satyajit Ray · A ridiculed village teacher's quiet meeting with a visitor from another world.</p>
+        <div class="progress-row">
+          <div class="progress-track"><div class="progress-fill" id="progress-fill-home-bonku"></div></div>
+          <div class="progress-label" id="progress-label-home-bonku">0% explored</div>
+        </div>
+      </div>
+
+      <div class="glass pick-card reveal" onclick="switchView('skimble')">
+        <div class="hero-eyebrow">Chapter II · Poem</div>
+        <h2>Skimbleshanks: The Railway Cat</h2>
+        <p class="desc">T. S. Eliot · The unofficial guardian of the night mail train, duty dressed up as a whimsical cat.</p>
+        <div class="progress-row">
+          <div class="progress-track"><div class="progress-fill" id="progress-fill-home-skimble"></div></div>
+          <div class="progress-label" id="progress-label-home-skimble">0% explored</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= CHAPTERS ================= -->
+    <div class="view" id="view-bonku"></div>
+    <div class="view" id="view-skimble"></div>
+  </main>
+
+  <footer class="app-foot">Night Line · study notes, not a substitute for the original text</footer>
+</div>
+
+<script>
+/* ============================================================ DATA ============================================================ */
+const DATA = {
+  bonku:{
+    title:"Bonku Babu's Friend",
+    chapterLabel:"Chapter I · Story",
+    meta:"Satyajit Ray · Prose",
+    stats:[["Author","Satyajit Ray"],["Genre","Science-fiction short story"],["Setting","Kankurgachhi village, West Bengal"],["Protagonist","Bonku Babu, a geography teacher"]],
+    characters:[
+      ["Bonku Babu","Protagonist","A soft-spoken, easily embarrassed geography teacher who is the regular target of his colleagues' jokes in the staff room."],
+      ["Ang","The visitor","A small, telepathic being from another world who befriends Bonku privately and shows him extraordinary abilities."],
+      ["Nilmoni Babu & colleagues","Antagonist figures","Fellow teachers who mock Bonku's timid nature and treat him as a source of amusement."],
+      ["The Headmaster","Passive authority","Aware of the teasing in the staff room but does little to stop it."]
+    ],
+    summary:[
+      ["Scene 1","Daily ridicule in the school staff room establishes Bonku Babu's isolation and low confidence among his peers."],
+      ["Scene 2","Walking home one evening, Bonku notices a strange glow in a nearby field and goes to investigate out of curiosity."],
+      ["Scene 3","He meets Ang, a small being who communicates through thought rather than speech and explains he is studying Earth."],
+      ["Scene 4","Ang demonstrates remarkable powers — reading Bonku's mind, seeing through solid objects, and superhuman strength — and a genuine bond forms."],
+      ["Scene 5","Hoping to finally silence his critics, Bonku invites Ang to visit the school the next day as proof of his extraordinary encounter."],
+      ["Scene 6","In front of the assembled teachers, Ang stays completely still and does nothing unusual, leaving Bonku more humiliated than before."],
+      ["Scene 7","That evening Ang explains he is bound never to reveal himself to a crowd, only to someone he trusts, then departs — leaving Bonku quietly comforted by the memory of a genuine, unconditional friendship."]
+    ],
+    themes:["Friendship needs no audience","Loneliness & casual cruelty","Self-worth beyond validation","Sci-fi as an emotional vehicle"],
+    themeNotes:[
+      ["Friendship without proof","Ang's refusal to perform publicly shows that the value of their bond never depended on convincing anyone else."],
+      ["The cost of ridicule","The staff room's casual mockery highlights how easily quiet, gentle people can be isolated by group humour."],
+      ["Quiet dignity","Bonku's calm acceptance by the story's end suggests real self-worth doesn't need external validation to survive."]
+    ],
+    devices:["Third-person limited narration","Irony","Foreshadowing","Understated humour","Contrast of mundane vs fantastical"],
+    deviceNotes:[
+      ["Irony","The being who could have won Bonku instant fame instead gives him something far more private and valuable — real friendship."],
+      ["Contrast","The very ordinary village school setting is set directly against an extraordinary, otherworldly encounter, sharpening both."],
+      ["Narration","Told close to Bonku's point of view, so his hurt and quiet joy both land with the reader directly."]
+    ],
+    qa:[
+      ["Why did the other teachers tease Bonku Babu?","They saw him as timid, easily embarrassed, and lacking in sharp general knowledge, which made him an easy, low-stakes target for staff-room banter."],
+      ["What made Bonku Babu trust Ang so quickly?","Ang communicated warmly through telepathy and revealed his powers to Bonku alone, creating a private, credible bond untouched by anyone else's doubt."],
+      ["Why did Ang refuse to perform in front of the teachers?","Beings like Ang are bound by a rule against exposing themselves to a crowd — his friendship with Bonku was personal, not a public spectacle."],
+      ["What is the significance of the story's title?","It reveals that Bonku's truest companion turns out to be an otherworldly stranger rather than any of his human colleagues, reframing what 'friend' really means."],
+      ["What does the ending suggest about happiness?","That genuine, private connection can bring real happiness even without public recognition or vindication."]
+    ],
+    flash:[
+      ["Author of the story?","Satyajit Ray"],["Where is the story set?","Kankurgachhi, a village in West Bengal"],
+      ["What is Bonku Babu's profession?","Geography teacher"],["What is the visitor's name?","Ang"],
+      ["Central theme?","Real friendship doesn't need public proof"],["Why is the title ironic?","Bonku's true friend is an alien, not his human colleagues"]
+    ],
+    quiz:[
+      {q:"What is Bonku Babu's profession?",opts:["Geography teacher","Postmaster","Doctor","Farmer"],correct:0},
+      {q:"Where does Bonku Babu first meet Ang?",opts:["In his classroom","In an open field at night","At the market","On a train"],correct:1},
+      {q:"How does Ang mainly communicate with Bonku?",opts:["Written notes","Loudly, in English","Telepathically","Through a translator"],correct:2},
+      {q:"Why does Ang stay silent in front of the other teachers?",opts:["He is asleep","He forgot his powers","He is bound not to reveal himself to a crowd","He dislikes the teachers"],correct:2},
+      {q:"What does Bonku ultimately gain from the encounter?",opts:["Fame in the village","A private, genuine friendship","A new job","Ang's powers"],correct:1}
+    ]
+  },
+  skimble:{
+    title:"Skimbleshanks: The Railway Cat",
+    chapterLabel:"Chapter II · Poem",
+    meta:"T. S. Eliot · Narrative poem",
+    stats:[["Poet","T. S. Eliot"],["Collection","Old Possum's Book of Practical Cats"],["Setting","Euston Station & the night mail train"],["Central figure","Skimbleshanks, a railway cat"]],
+    characters:[
+      ["Skimbleshanks","Central figure","A practical, methodical ginger cat who works as the unofficial guardian of the night mail train, checking on every carriage and passenger."],
+      ["The passengers","Implied presence","Travellers on the overnight train who find comfort in the cat's visible watchfulness during an unfamiliar journey."],
+      ["The train staff","Background figures","Human crew whose work is quietly framed as incomplete without Skimbleshanks' own inspection."]
+    ],
+    summary:[
+      ["Stanza idea 1","The mail train cannot properly leave until Skimbleshanks has made his rounds — his presence is treated as a sign that everything is in order."],
+      ["Stanza idea 2","He patrols the length of the train, checking berths, luggage and compartments with quiet, confident authority."],
+      ["Stanza idea 3","As the train departs into the night, unfamiliar and slightly unsettling for passengers, his visible watchfulness offers reassurance."],
+      ["Stanza idea 4","He is shown as tireless, staying alert through the late hours despite the calm, whimsical tone of the poem."],
+      ["Stanza idea 5","By the poem's close he is firmly established as an indispensable presence, arguably more essential to the journey than the human staff."]
+    ],
+    themes:["Dignity of quiet duty","Comfort of routine","Order versus chaos","Animals elevated through personification"],
+    themeNotes:[
+      ["Unglamorous responsibility","Skimbleshanks' work is small and repetitive, yet the poem treats it as genuinely essential — dignifying quiet, background labour."],
+      ["Comfort in the unfamiliar","Night travel can feel disorienting; a steady, recognisable presence like Skimbleshanks eases that unease for passengers."],
+      ["Order and control","Against the potential chaos of a moving night train, Skimbleshanks represents calm, dependable control."]
+    ],
+    devices:["Personification","Rhythm mimicking a moving train","Refrain","Night-travel imagery","Alliteration & playful diction"],
+    deviceNotes:[
+      ["Personification","Skimbleshanks is given human-level responsibility, judgement and professional pride, elevating ordinary cat behaviour into purposeful duty."],
+      ["Rhythm","The poem's bouncing, rolling metre echoes the rocking and clattering motion of a train in transit, tying sound to subject."],
+      ["Refrain","A repeated line running through the poem reinforces Skimbleshanks' reputation for being steady and habitual, almost like a formal title."]
+    ],
+    qa:[
+      ["What is Skimbleshanks' role on the train?","He acts as an unofficial night guardian, inspecting carriages and berths and reassuring passengers so the train can run smoothly and depart on schedule."],
+      ["How does the poem's rhythm relate to its subject?","The bouncing, rolling metre echoes the rocking and clattering of a moving train, tying the poem's sound directly to its setting."],
+      ["Why does the poem use a repeated refrain?","It reinforces Skimbleshanks' reputation for being dependable and habitual, turning him into an almost legendary fixture of the night train."],
+      ["What larger idea does Skimbleshanks represent?","The quiet dignity of unglamorous, essential work, and the comfort a steady presence brings during an uncertain journey."],
+      ["How does personification shape our view of him?","Giving a cat human-like responsibility and pride elevates ordinary animal behaviour into a symbol of order and care."]
+    ],
+    flash:[
+      ["Poet?","T. S. Eliot"],["Collection it's from?","Old Possum's Book of Practical Cats"],
+      ["Where does the poem open?","Euston Station"],["What is Skimbleshanks' job?","Unofficial guardian of the night mail train"],
+      ["Main literary device used throughout?","Personification"],["Central theme?","Dignity of quiet, dependable duty"]
+    ],
+    quiz:[
+      {q:"Who wrote 'Skimbleshanks: The Railway Cat'?",opts:["T. S. Eliot","Satyajit Ray","Roald Dahl","Ted Hughes"],correct:0},
+      {q:"Which collection does the poem come from?",opts:["A Book of Nonsense","Old Possum's Book of Practical Cats","Just So Stories","The Jungle Book"],correct:1},
+      {q:"Where does the poem's train journey begin?",opts:["Paddington Station","King's Cross","Euston Station","Victoria Station"],correct:2},
+      {q:"What is Skimbleshanks' main role?",opts:["Catching mice","Guarding and inspecting the night train","Selling tickets","Driving the engine"],correct:1},
+      {q:"What poetic device dominates the poem?",opts:["Personification","Blank verse","Free indirect speech","Epic simile"],correct:0}
+    ]
+  }
+};
+
+const SECTIONS = [
+  ["overview","Overview","📖"],
+  ["characters","Characters","🎭"],
+  ["summary","Summary, step by step","🧭"],
+  ["themes","Themes","💡"],
+  ["devices","Literary devices","✒️"],
+  ["qa","Important Q&A","❓"],
+  ["flashcards","Flashcards","🃏"],
+  ["quiz","Quick quiz","🎯"]
+];
+
+const explored = {bonku:new Set(), skimble:new Set()};
+
+/* ============================================================ RENDER CHAPTER ============================================================ */
+let built = {bonku:false, skimble:false};
+
+function renderChapter(key){
+  const d = DATA[key];
+  const wrap = document.getElementById('view-'+key);
+
+  const bodies = {
+    overview: `<div class="stat-row">${d.stats.map(s=>`<div class="stat"><div class="k">${s[0]}</div><div class="v">${s[1]}</div></div>`).join('')}</div>`,
+    characters: d.characters.map(ch=>`<div class="char-card"><div class="name">${ch[0]}</div><span class="role">${ch[1]}</span><p>${ch[2]}</p></div>`).join(''),
+    summary: `<div class="timeline">${d.summary.map(s=>`<div class="tl-item"><div class="step">${s[0]}</div><p>${s[1]}</p></div>`).join('')}</div>`,
+    themes: `<div class="pill-list">${d.themes.map(t=>`<span class="pill">${t}</span>`).join('')}</div><div class="note-list">${d.themeNotes.map(n=>`<div class="note-item"><b>${n[0]}</b><p>${n[1]}</p></div>`).join('')}</div>`,
+    devices: `<div class="pill-list">${d.devices.map(t=>`<span class="pill">${t}</span>`).join('')}</div><div class="note-list">${d.deviceNotes.map(n=>`<div class="note-item"><b>${n[0]}</b><p>${n[1]}</p></div>`).join('')}</div>`,
+    qa: `<div class="qa-list">${d.qa.map(qa=>`<div class="qa-item" onclick="toggleQA(this)"><div class="qa-q"><span>${qa[0]}</span><span class="plus">+</span></div><div class="qa-a"><p>${qa[1]}</p></div></div>`).join('')}</div>`,
+    flashcards: `<div class="flash-grid">${d.flash.map((f,i)=>`<div class="flash" onclick="this.classList.toggle('flipped')"><div class="flash-inner"><div class="flash-face flash-front"><div class="tag">Card ${i+1}</div><div class="q">${f[0]}</div></div><div class="flash-face flash-back"><div class="a">${f[1]}</div></div></div></div>`).join('')}</div>`,
+    quiz: `<div id="${key}-quiz-body"></div>`
+  };
+
+  const accordionHtml = SECTIONS.map(([id,label,icon],i)=>`
+    <div class="acc-item" id="${key}-acc-${id}">
+      <div class="acc-head" onclick="toggleAcc('${key}','${id}')">
+        <div class="acc-icon">${icon}</div>
+        <div class="acc-title">${label}</div>
+        <div class="acc-chev">▾</div>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">${bodies[id]}</div></div>
+    </div>`).join('');
+
+  wrap.innerHTML = `
+    <div class="glass hero-card reveal">
+      <div class="hero-eyebrow">${d.chapterLabel}</div>
+      <h2>${d.title}</h2>
+      <div class="hero-meta">${d.meta}</div>
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill-${key}"></div></div>
+        <div class="progress-label" id="progress-label-${key}">0% explored</div>
+      </div>
+    </div>
+    <div class="accordion reveal">${accordionHtml}</div>
+    <div class="glass next-chip reveal" onclick="switchView('${key==='bonku'?'skimble':'bonku'}')">
+      <div><span class="lbl">Next up</span>${key==='bonku' ? "Skimbleshanks: The Railway Cat" : "Bonku Babu's Friend"}</div>
+      <div>→</div>
+    </div>
+  `;
+}
+
+function toggleAcc(key, id){
+  const item = document.getElementById(key+'-acc-'+id);
+  const body = item.querySelector('.acc-body');
+  const isOpen = item.classList.contains('open');
+  if(isOpen){
+    item.classList.remove('open');
+    body.style.maxHeight = 0;
+  } else {
+    item.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    if(!explored[key].has(id)){
+      explored[key].add(id);
+      updateProgress(key);
+    }
+    if(id === 'quiz' && !quizState[key]) initQuiz(key);
+  }
+}
+
+function toggleQA(el){
+  el.classList.toggle('open');
+  const a = el.querySelector('.qa-a');
+  a.style.maxHeight = el.classList.contains('open') ? a.scrollHeight+'px' : 0;
+  // keep parent accordion body height in sync
+  const parentBody = el.closest('.acc-body');
+  if(parentBody) requestAnimationFrame(()=>{ parentBody.style.maxHeight = parentBody.scrollHeight + 'px'; });
+}
+
+function updateProgress(key){
+  const pct = Math.round((explored[key].size / SECTIONS.length) * 100);
+  const fill = document.getElementById('progress-fill-'+key);
+  const label = document.getElementById('progress-label-'+key);
+  const fillHome = document.getElementById('progress-fill-home-'+key);
+  const labelHome = document.getElementById('progress-label-home-'+key);
+  if(fill){fill.style.width = pct+'%';}
+  if(label){label.textContent = pct+'% explored';}
+  if(fillHome){fillHome.style.width = pct+'%';}
+  if(labelHome){labelHome.textContent = pct+'% explored';}
+}
+
+/* ============================================================ QUIZ ENGINE ============================================================ */
+const quizState = {};
+function initQuiz(key){
+  quizState[key] = {i:0, score:0, answered:false};
+  renderQuiz(key);
+}
+function renderQuiz(key){
+  const d = DATA[key]; const st = quizState[key]; const q = d.quiz[st.i];
+  const body = document.getElementById(key+'-quiz-body');
+  if(!body) return;
+  const bars = d.quiz.map((_,idx)=>`<i class="${idx<st.i || (idx===st.i && st.answered) ? 'done':''}"></i>`).join('');
+  if(st.i >= d.quiz.length){
+    body.innerHTML = `
+      <div style="text-align:center;padding:14px 0;">
+        <div style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;margin-bottom:6px;">${st.score} / ${d.quiz.length}</div>
+        <div style="color:var(--text-muted);font-size:12.5px;margin-bottom:18px;">Nice work — review any section above and try again.</div>
+        <button class="btn" onclick="initQuiz('${key}')">Retake quiz</button>
+      </div>`;
+    resyncAccHeight(key);
+    return;
+  }
+  body.innerHTML = `
+    <div class="quiz-progress">${bars}</div>
+    <div class="quiz-q">${st.i+1}. ${q.q}</div>
+    <div class="quiz-opts">${q.opts.map((o,idx)=>`<div class="quiz-opt" data-idx="${idx}" onclick="answerQuiz('${key}',${idx})">${o}</div>`).join('')}</div>
+    <div class="quiz-footer">
+      <span class="quiz-score">Score: ${st.score}/${d.quiz.length}</span>
+      <button class="btn ghost" onclick="nextQuiz('${key}')" ${st.answered ? '' : 'style="opacity:.35;pointer-events:none;"'}>Next →</button>
+    </div>`;
+  resyncAccHeight(key);
+}
+function answerQuiz(key, idx){
+  const d = DATA[key]; const st = quizState[key];
+  if(st.answered) return;
+  st.answered = true;
+  const q = d.quiz[st.i];
+  if(idx === q.correct) st.score++;
+  document.querySelectorAll('#'+key+'-quiz-body .quiz-opt').forEach((el,i)=>{
+    el.classList.add('disabled');
+    if(i===q.correct) el.classList.add('correct');
+    else if(i===idx) el.classList.add('wrong');
+  });
+  const btn = document.querySelector('#'+key+'-quiz-body .quiz-footer .btn.ghost');
+  if(btn){ btn.style.opacity=1; btn.style.pointerEvents='auto'; }
+  const score = document.querySelector('#'+key+'-quiz-body .quiz-score');
+  if(score) score.textContent = `Score: ${quizState[key].score}/${d.quiz.length}`;
+}
+function nextQuiz(key){ quizState[key].i++; quizState[key].answered=false; renderQuiz(key); }
+function resyncAccHeight(key){
+  const item = document.getElementById(key+'-acc-quiz');
+  if(item && item.classList.contains('open')){
+    const body = item.querySelector('.acc-body');
+    requestAnimationFrame(()=>{ body.style.maxHeight = body.scrollHeight + 'px'; });
+  }
+}
+
+/* ============================================================ VIEW SWITCH ============================================================ */
+let currentView = 'home';
+function switchView(view){
+  currentView = view;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.flap-tab').forEach(t=>t.classList.toggle('active', t.dataset.view===view));
+  if(view!=='home' && !built[view]){
+    renderChapter(view);
+    built[view]=true;
+    setupReveal();
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function setupReveal(){
+  const els = document.querySelectorAll('.reveal:not(.show)');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+  }, {threshold:0.08});
+  els.forEach(el=>io.observe(el));
+}
+
+/* ============================================================ STARFIELD ============================================================ */
+(function(){
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resize(){
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const count = Math.floor((canvas.width*canvas.height)/11000);
+    stars = Array.from({length:count}, ()=>({
+      x:Math.random()*canvas.width, y:Math.random()*canvas.height,
+      r:Math.random()*1.1+0.2, tw:Math.random()*Math.PI*2, sp:Math.random()*0.02+0.005
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const s of stars){
+      s.tw += s.sp;
+      const alpha = 0.15 + Math.abs(Math.sin(s.tw))*0.35;
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(240,220,200,${alpha})`;
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize);
+  resize(); draw();
+})();
+
+setupReveal();
+</script>
+</body>
+</html>
